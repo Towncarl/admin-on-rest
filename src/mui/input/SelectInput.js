@@ -83,11 +83,11 @@ export class SelectInput extends Component {
         this.props.input.onChange(value);
         this.setState({ value });
     };
-
+    // allow to set the label for empty value
     addAllowEmpty = choices => {
         if (this.props.allowEmpty) {
             return [
-                <MenuItem value={null} key="null" primaryText="" />,
+                <MenuItem value={null} key={this.props.emptyLabel} primaryText={this.props.emptyLabel}/>,
                 ...choices,
             ];
         }
@@ -166,6 +166,7 @@ export class SelectInput extends Component {
 SelectInput.propTypes = {
     addField: PropTypes.bool.isRequired,
     allowEmpty: PropTypes.bool.isRequired,
+    emptyLabel: PropTypes.string,
     choices: PropTypes.arrayOf(PropTypes.object),
     elStyle: PropTypes.object,
     input: PropTypes.object,
@@ -188,6 +189,7 @@ SelectInput.propTypes = {
 SelectInput.defaultProps = {
     addField: true,
     allowEmpty: false,
+    emptyLabel: '',
     choices: [],
     options: {},
     optionText: 'name',
