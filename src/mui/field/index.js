@@ -13,3 +13,5 @@ export RichTextField from './RichTextField';
 export SelectField from './SelectField';
 export TextField from './TextField';
 export UrlField from './UrlField';
+export UrlTextField from './UrlTextField';
+export RelativeImageField from './RelativeImageField';

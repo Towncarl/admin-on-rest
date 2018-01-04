@@ -26,7 +26,8 @@ const crudFetch = restClient => {
         try {
             response = yield call(restClient, restType, meta.resource, payload);
             if (!response.data) {
-                throw new Error('REST response must contain a data key');
+                throw new Error('图片已异步上传，请刷新确认');
+                // throw new Error('REST response must contain a data key');
             }
             yield put({
                 type: `${type}_SUCCESS`,
@@ -38,7 +39,8 @@ const crudFetch = restClient => {
                     fetchStatus: FETCH_END,
                 },
             });
-            yield put({ type: FETCH_END });
+            yield put({type: FETCH_END});
+
         } catch (error) {
             yield put({
                 type: `${type}_FAILURE`,
