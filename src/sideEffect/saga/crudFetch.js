@@ -26,7 +26,8 @@ const crudFetch = restClient => {
         try {
             response = yield call(restClient, restType, meta.resource, payload);
             if (!response.data) {
-                throw new Error('图片已异步上传，请刷新确认');
+                //Towncarl: tmp fix due to the async upload
+                throw new Error('图片已上传，请到列表页面确认');
                 // throw new Error('REST response must contain a data key');
             }
             yield put({
