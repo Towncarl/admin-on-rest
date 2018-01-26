@@ -9,7 +9,8 @@ const styles = {
     },
     image: {
         margin: '0.5rem',
-        maxHeight: '10rem',
+        maxHeight: '100%',
+        maxWidth: '100%'
     },
 };
 
