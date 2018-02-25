@@ -19,6 +19,7 @@ import {
     TextField,
     TextInput,
     minLength,
+    required,
     translate,
     Show,
     ShowButton,
@@ -30,11 +31,13 @@ import Avatar from 'material-ui/Avatar';
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
+
 import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
-export CommentIcon from 'material-ui/svg-icons/communication/chat-bubble';
+import ChatBubbleIcon from 'material-ui/svg-icons/communication/chat-bubble';
+export const CommentIcon = ChatBubbleIcon;
 
-const CommentFilter = ({ ...props }) => (
+const CommentFilter = props => (
     <Filter {...props}>
         <ReferenceInput source="post_id" reference="posts">
             <SelectInput optionText="title" />
@@ -143,7 +146,7 @@ const CommentMobileList = props => (
     />
 );
 
-export const CommentList = ({ ...props }) => (
+export const CommentList = props => (
     <List
         {...props}
         perPage={6}
@@ -154,11 +157,13 @@ export const CommentList = ({ ...props }) => (
     </List>
 );
 
-export const CommentEdit = ({ ...props }) => (
+const validateMinLength = minLength(10);
+export const CommentEdit = props => (
     <Edit {...props}>
         <SimpleForm>
             <DisabledInput source="id" />
             <ReferenceInput
+                label="Post"
                 source="post_id"
                 reference="posts"
                 perPage={5}
@@ -166,31 +171,32 @@ export const CommentEdit = ({ ...props }) => (
             >
                 <AutocompleteInput optionText="title" />
             </ReferenceInput>
-            <TextInput source="author.name" validate={minLength(10)} />
+            <TextInput source="author.name" validate={validateMinLength} />
             <DateInput source="created_at" />
-            <LongTextInput source="body" validate={minLength(10)} />
+            <LongTextInput source="body" validate={validateMinLength} />
         </SimpleForm>
     </Edit>
 );
 
-export const CommentCreate = ({ ...props }) => (
+const defaultValue = { created_at: new Date() };
+export const CommentCreate = props => (
     <Create {...props}>
-        <SimpleForm defaultValue={{ created_at: new Date() }}>
+        <SimpleForm defaultValue={defaultValue}>
             <ReferenceInput
+                label="Post"
                 source="post_id"
                 reference="posts"
-                allowEmpty
-                validation={{ required: true }}
+                validate={required}
             >
                 <SelectInput optionText="title" />
             </ReferenceInput>
             <DateInput source="created_at" />
-            <LongTextInput source="body" />
+            <LongTextInput source="body" validate={required} />
         </SimpleForm>
     </Create>
 );
 
-export const CommentShow = ({ ...props }) => (
+export const CommentShow = props => (
     <Show {...props}>
         <SimpleShowLayout>
             <TextField source="id" />

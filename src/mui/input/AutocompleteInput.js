@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import get from 'lodash.get';
+import isEqual from 'lodash.isequal';
 import AutoComplete from 'material-ui/AutoComplete';
 
 import FieldTitle from '../../util/FieldTitle';
@@ -80,26 +81,37 @@ export class AutocompleteInput extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (!isEqual(this.props.choices, nextProps.choices)) {
+            return;
+        }
+
         if (this.props.input.value !== nextProps.input.value) {
             this.setSearchText(nextProps);
         }
     }
 
     setSearchText(props) {
-        const { choices, input, optionValue } = props;
+        const { choices, input, optionValue, translate } = props;
 
         const selectedSource = choices.find(
             choice => get(choice, optionValue) === input.value
         );
-        const searchText = selectedSource && this.getSuggestion(selectedSource);
+        const searchText =
+            (selectedSource && this.getSuggestion(selectedSource)) ||
+            translate('aor.input.autocomplete.none');
         this.setState({ searchText });
     }
 
     handleNewRequest = (chosenRequest, index) => {
-        if (index !== -1) {
-            const { choices, input, optionValue } = this.props;
-            input.onChange(choices[index][optionValue]);
+        const { allowEmpty, choices, input, optionValue } = this.props;
+        let choiceIndex = allowEmpty ? index - 1 : index;
+
+        // The empty item is always at first position
+        if (allowEmpty && index === 0) {
+            return input.onChange('');
         }
+
+        input.onChange(choices[choiceIndex][optionValue]);
     };
 
     handleUpdateInput = searchText => {
@@ -118,6 +130,22 @@ export class AutocompleteInput extends Component {
             ? translate(choiceName, { _: choiceName })
             : choiceName;
     }
+
+    addAllowEmpty = choices => {
+        const { allowEmpty, translate } = this.props;
+
+        if (allowEmpty) {
+            return [
+                {
+                    value: '',
+                    text: translate('aor.input.autocomplete.none'),
+                },
+                ...choices,
+            ];
+        }
+
+        return choices;
+    };
 
     render() {
         const {
@@ -139,10 +167,13 @@ export class AutocompleteInput extends Component {
         }
         const { touched, error } = meta;
 
-        const dataSource = choices.map(choice => ({
-            value: get(choice, optionValue),
-            text: this.getSuggestion(choice),
-        }));
+        const dataSource = this.addAllowEmpty(
+            choices.map(choice => ({
+                value: get(choice, optionValue),
+                text: this.getSuggestion(choice),
+            }))
+        );
+
         return (
             <AutoComplete
                 searchText={this.state.searchText}
@@ -169,6 +200,7 @@ export class AutocompleteInput extends Component {
 
 AutocompleteInput.propTypes = {
     addField: PropTypes.bool.isRequired,
+    allowEmpty: PropTypes.bool.isRequired,
     choices: PropTypes.arrayOf(PropTypes.object),
     elStyle: PropTypes.object,
     filter: PropTypes.func.isRequired,
