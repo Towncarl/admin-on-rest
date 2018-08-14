@@ -7,7 +7,7 @@ import getDefaultValues from './getDefaultValues';
 import FormInput from './FormInput';
 import Toolbar from './Toolbar';
 
-const formStyle = { padding: '0 1em 1em 1em' };
+const formStyle = { padding: '0 1em 3em 1em' };
 
 export class SimpleForm extends Component {
     handleSubmitWithRedirect = (redirect = this.props.redirect) =>
@@ -28,14 +28,18 @@ export class SimpleForm extends Component {
         return (
             <form className="simple-form">
                 <div style={formStyle} key={version}>
-                    {Children.map(children, input => (
-                        <FormInput
-                            basePath={basePath}
-                            input={input}
-                            record={record}
-                            resource={resource}
-                        />
-                    ))}
+                    {Children.map(
+                        children,
+                        input =>
+                            input ? (
+                                <FormInput
+                                    basePath={basePath}
+                                    input={input}
+                                    record={record}
+                                    resource={resource}
+                                />
+                            ) : null
+                    )}
                 </div>
                 {toolbar &&
                     React.cloneElement(toolbar, {
